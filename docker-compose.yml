@@ -1,15 +1,31 @@
 version: '3'
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./tmp/db:/var/lib/postgresql/data
   web:
     build: .
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     volumes:
-      - .:/myapp
+      - '.:/myapp'
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - db
+      - kafka
+  db:
+    image: postgres
+    volumes:
+      - './tmp/db:/var/lib/postgresql/data'
+  kafka:
+    image: landoop/kafka-lenses-dev
+    environment:
+      SAMPLEDATA: '0'
+      RUNNING_SAMPLEDATA: '0'
+      EULA: '${LENSES_LICENSE_URL}'
+    ports:
+      - '3030:3030'
+      - '9092:9092'
+      - '2181:2181'
+      - '8081:8081'
+      - '9581:9581'
+      - '9582:9582'
+      - '9584:9584'
+      - '9585:9585'
